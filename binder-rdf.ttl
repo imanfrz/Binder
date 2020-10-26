@@ -1,0 +1,1282 @@
+@prefix : <http://www.example.com/binder/> .
+@prefix bd: <http://www.example.com/binder/> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix wgs: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix genre: <http://sparql.cwrc.ca/ontologies/genre#> .
+@base <http://www.example.com/binder/> .
+
+<http://www.example.com/binder/> rdf:type owl:Ontology ;
+                                  owl:imports <http://sparql.cwrc.ca/ontologies/genre> .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://purl.org/ontology/bibo/abstract
+bibo:abstract rdf:type owl:AnnotationProperty ;
+              rdfs:subPropertyOf <http://purl.org/dc/terms/description> .
+
+
+###  http://www.example.com/binder/hasReleaseDate
+bd:hasReleaseDate rdf:type owl:AnnotationProperty ;
+                  rdfs:subPropertyOf <http://purl.org/dc/terms/date> .
+
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.w3.org/2001/XMLSchema#date
+xsd:date rdf:type rdfs:Datatype .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://purl.org/dc/terms/contributor
+<http://purl.org/dc/terms/contributor> rdf:type owl:ObjectProperty .
+
+
+###  http://purl.org/dc/terms/format
+<http://purl.org/dc/terms/format> rdf:type owl:ObjectProperty ;
+                                  rdfs:range bd:Format .
+
+
+###  http://purl.org/dc/terms/language
+<http://purl.org/dc/terms/language> rdf:type owl:ObjectProperty .
+
+
+###  http://purl.org/ontology/bibo/authorList
+bibo:authorList rdf:type owl:ObjectProperty .
+
+
+###  http://sparql.cwrc.ca/ontologies/genre#hasGenre
+genre:hasGenre owl:equivalentProperty bd:hasGenre .
+
+
+###  http://www.example.com/binder/authorOf
+bd:authorOf rdf:type owl:ObjectProperty ;
+            owl:inverseOf bd:hasAuthor ;
+            rdfs:domain <http://xmlns.com/foaf/0.1/Person> .
+
+
+###  http://www.example.com/binder/hasAuthor
+bd:hasAuthor rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf bibo:authorList .
+
+
+###  http://www.example.com/binder/hasGenre
+bd:hasGenre rdf:type owl:ObjectProperty ;
+            rdfs:range bd:Genre .
+
+
+###  http://www.example.com/binder/hasLanguage
+bd:hasLanguage rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf <http://purl.org/dc/terms/language> ;
+               rdfs:range bd:Language .
+
+
+###  http://www.example.com/binder/hasPublisher
+bd:hasPublisher rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf <http://purl.org/dc/terms/contributor> ;
+                rdfs:range bd:Publisher .
+
+
+###  http://www.example.com/binder/publishedIn
+bd:publishedIn rdf:type owl:ObjectProperty ;
+               rdfs:range bd:Country .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.example.com/binder/hasPageCount
+bd:hasPageCount rdf:type owl:DatatypeProperty ;
+                rdfs:range xsd:integer .
+
+
+###  http://www.example.com/binder/hasRating
+bd:hasRating rdf:type owl:DatatypeProperty ;
+             rdfs:range xsd:decimal .
+
+
+###  http://www.example.com/binder/hasReleaseDate
+bd:hasReleaseDate rdf:type owl:DatatypeProperty .
+
+
+###  http://www.example.com/binder/hasTitle
+bd:hasTitle rdf:type owl:DatatypeProperty ;
+            rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://purl.org/ontology/bibo/Book
+bibo:Book rdf:type owl:Class ;
+          owl:equivalentClass bd:Book .
+
+
+###  http://sparql.cwrc.ca/ontologies/genre#Genre
+genre:Genre owl:equivalentClass bd:Genre .
+
+
+###  http://www.example.com/binder/Audio
+bd:Audio rdf:type owl:Class ;
+         rdfs:subClassOf bd:Format .
+
+
+###  http://www.example.com/binder/Author
+bd:Author rdf:type owl:Class ;
+          rdfs:subClassOf <http://xmlns.com/foaf/0.1/Person> .
+
+
+###  http://www.example.com/binder/Book
+bd:Book rdf:type owl:Class .
+
+
+###  http://www.example.com/binder/BookAuthor
+bd:BookAuthor rdf:type owl:Class ;
+              owl:equivalentClass [ rdf:type owl:Restriction ;
+                                    owl:onProperty bd:authorOf ;
+                                    owl:someValuesFrom bd:Book
+                                  ] ;
+              rdfs:subClassOf bd:Author .
+
+
+###  http://www.example.com/binder/BookCharacteristic
+bd:BookCharacteristic rdf:type owl:Class .
+
+
+###  http://www.example.com/binder/BookWithLength
+bd:BookWithLength rdf:type owl:Class ;
+                  rdfs:subClassOf bd:Book .
+
+
+###  http://www.example.com/binder/Country
+bd:Country rdf:type owl:Class .
+
+
+###  http://www.example.com/binder/FiveStarBook
+bd:FiveStarBook rdf:type owl:Class ;
+                owl:equivalentClass [ rdf:type owl:Restriction ;
+                                      owl:onProperty bd:hasRating ;
+                                      owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                           owl:onDatatype xsd:decimal ;
+                                                           owl:withRestrictions ( [ xsd:minInclusive 4.5
+                                                                                  ]
+                                                                                )
+                                                         ]
+                                    ] ;
+                rdfs:subClassOf bd:RatedBook .
+
+
+###  http://www.example.com/binder/Format
+bd:Format rdf:type owl:Class ;
+          rdfs:subClassOf bd:BookCharacteristic .
+
+
+###  http://www.example.com/binder/FourStarBook
+bd:FourStarBook rdf:type owl:Class ;
+                owl:equivalentClass [ rdf:type owl:Restriction ;
+                                      owl:onProperty bd:hasRating ;
+                                      owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                           owl:onDatatype xsd:decimal ;
+                                                           owl:withRestrictions ( [ xsd:minInclusive 3.5
+                                                                                  ]
+                                                                                  [ xsd:maxExclusive 4.5
+                                                                                  ]
+                                                                                )
+                                                         ]
+                                    ] ;
+                rdfs:subClassOf bd:RatedBook .
+
+
+###  http://www.example.com/binder/Genre
+bd:Genre rdf:type owl:Class ;
+         rdfs:subClassOf bd:BookCharacteristic .
+
+
+###  http://www.example.com/binder/Language
+bd:Language rdf:type owl:Class .
+
+
+###  http://www.example.com/binder/LongBook
+bd:LongBook rdf:type owl:Class ;
+            owl:equivalentClass [ rdf:type owl:Restriction ;
+                                  owl:onProperty bd:hasPageCount ;
+                                  owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                       owl:onDatatype xsd:integer ;
+                                                       owl:withRestrictions ( [ xsd:minInclusive 500
+                                                                              ]
+                                                                            )
+                                                     ]
+                                ] ;
+            rdfs:subClassOf bd:BookWithLength .
+
+
+###  http://www.example.com/binder/MediumBook
+bd:MediumBook rdf:type owl:Class ;
+              owl:equivalentClass [ rdf:type owl:Restriction ;
+                                    owl:onProperty bd:hasPageCount ;
+                                    owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                         owl:onDatatype xsd:integer ;
+                                                         owl:withRestrictions ( [ xsd:minInclusive 200
+                                                                                ]
+                                                                                [ xsd:maxExclusive 500
+                                                                                ]
+                                                                              )
+                                                       ]
+                                  ] ;
+              rdfs:subClassOf bd:BookWithLength .
+
+
+###  http://www.example.com/binder/OneStarBook
+bd:OneStarBook rdf:type owl:Class ;
+               owl:equivalentClass [ rdf:type owl:Restriction ;
+                                     owl:onProperty bd:hasRating ;
+                                     owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                          owl:onDatatype xsd:decimal ;
+                                                          owl:withRestrictions ( [ xsd:maxExclusive 1.5
+                                                                                 ]
+                                                                               )
+                                                        ]
+                                   ] ;
+               rdfs:subClassOf bd:RatedBook .
+
+
+###  http://www.example.com/binder/Publisher
+bd:Publisher rdf:type owl:Class ;
+             rdfs:subClassOf <http://xmlns.com/foaf/0.1/Organization> .
+
+
+###  http://www.example.com/binder/RatedBook
+bd:RatedBook rdf:type owl:Class ;
+             rdfs:subClassOf bd:Book .
+
+
+###  http://www.example.com/binder/Reading
+bd:Reading rdf:type owl:Class ;
+           rdfs:subClassOf bd:Format .
+
+
+###  http://www.example.com/binder/ShortBook
+bd:ShortBook rdf:type owl:Class ;
+             owl:equivalentClass [ rdf:type owl:Restriction ;
+                                   owl:onProperty bd:hasPageCount ;
+                                   owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                        owl:onDatatype xsd:integer ;
+                                                        owl:withRestrictions ( [ xsd:maxExclusive 200
+                                                                               ]
+                                                                             )
+                                                      ]
+                                 ] ;
+             rdfs:subClassOf bd:BookWithLength .
+
+
+###  http://www.example.com/binder/ThreeStarBook
+bd:ThreeStarBook rdf:type owl:Class ;
+                 owl:equivalentClass [ rdf:type owl:Restriction ;
+                                       owl:onProperty bd:hasRating ;
+                                       owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                            owl:onDatatype xsd:decimal ;
+                                                            owl:withRestrictions ( [ xsd:minInclusive 2.5
+                                                                                   ]
+                                                                                   [ xsd:maxExclusive 3.5
+                                                                                   ]
+                                                                                 )
+                                                          ]
+                                     ] ;
+                 rdfs:subClassOf bd:RatedBook .
+
+
+###  http://www.example.com/binder/TwoStarBook
+bd:TwoStarBook rdf:type owl:Class ;
+               owl:equivalentClass [ rdf:type owl:Restriction ;
+                                     owl:onProperty bd:hasRating ;
+                                     owl:someValuesFrom [ rdf:type rdfs:Datatype ;
+                                                          owl:onDatatype xsd:decimal ;
+                                                          owl:withRestrictions ( [ xsd:minInclusive 1.5
+                                                                                 ]
+                                                                                 [ xsd:maxExclusive 2.5
+                                                                                 ]
+                                                                               )
+                                                        ]
+                                   ] ;
+               rdfs:subClassOf bd:RatedBook .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://dbpedia.org/resource/And_Still_I_Rise
+<http://dbpedia.org/resource/And_Still_I_Rise> rdf:type owl:NamedIndividual ;
+                                               owl:sameAs <http://www.example.com/binder/And%20Still%20I%20Rise> .
+
+
+###  http://dbpedia.org/resource/Autobiographical_novel
+<http://dbpedia.org/resource/Autobiographical_novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Book_of_Haikus
+<http://dbpedia.org/resource/Book_of_Haikus> rdf:type owl:NamedIndividual ;
+                                             owl:sameAs <http://www.example.com/binder/Book%20of%20Haikus> .
+
+
+###  http://dbpedia.org/resource/Cyberpunk
+<http://dbpedia.org/resource/Cyberpunk> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Epistolary_novel
+<http://dbpedia.org/resource/Epistolary_novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Fantasy_novel
+<http://dbpedia.org/resource/Fantasy_novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Fiction
+<http://dbpedia.org/resource/Fiction> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Gates_of_Fire
+<http://dbpedia.org/resource/Gates_of_Fire> rdf:type owl:NamedIndividual ;
+                                            owl:sameAs <http://www.example.com/binder/Gates%20of%20Fire> .
+
+
+###  http://dbpedia.org/resource/Going_After_Cacciato
+<http://dbpedia.org/resource/Going_After_Cacciato> rdf:type owl:NamedIndividual ;
+                                                   owl:sameAs <http://www.example.com/binder/Going%20After%20Cacciato> .
+
+
+###  http://dbpedia.org/resource/Gothic_fiction
+<http://dbpedia.org/resource/Gothic_fiction> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Historical_fiction
+<http://dbpedia.org/resource/Historical_fiction> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Horror_fiction
+<http://dbpedia.org/resource/Horror_fiction> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Horror_novel
+<http://dbpedia.org/resource/Horror_novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/In_the_Hand_of_Dante
+<http://dbpedia.org/resource/In_the_Hand_of_Dante> rdf:type owl:NamedIndividual ;
+                                                   owl:sameAs <http://www.example.com/binder/In%20the%20Hand%20of%20Dante> .
+
+
+###  http://dbpedia.org/resource/Life_of_Pi
+<http://dbpedia.org/resource/Life_of_Pi> rdf:type owl:NamedIndividual ;
+                                         owl:sameAs <http://www.example.com/binder/Life%20of%20Pi> .
+
+
+###  http://dbpedia.org/resource/Literary_fiction
+<http://dbpedia.org/resource/Literary_fiction> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Magical_Realism
+<http://dbpedia.org/resource/Magical_Realism> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Metafiction
+<http://dbpedia.org/resource/Metafiction> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Mystery_novel
+<http://dbpedia.org/resource/Mystery_novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Neuromancer
+<http://dbpedia.org/resource/Neuromancer> rdf:type owl:NamedIndividual ;
+                                          owl:sameAs bd:Neuromancer .
+
+
+###  http://dbpedia.org/resource/Novel
+<http://dbpedia.org/resource/Novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Novella
+<http://dbpedia.org/resource/Novella> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Only_Revolutions
+<http://dbpedia.org/resource/Only_Revolutions> rdf:type owl:NamedIndividual ;
+                                               owl:sameAs <http://www.example.com/binder/Only%20Revolutions> .
+
+
+###  http://dbpedia.org/resource/Poetry
+<http://dbpedia.org/resource/Poetry> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Romantic_novel
+<http://dbpedia.org/resource/Romantic_novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Roughing_It
+<http://dbpedia.org/resource/Roughing_It> rdf:type owl:NamedIndividual ;
+                                          owl:sameAs <http://www.example.com/binder/Roughing%20It> .
+
+
+###  http://dbpedia.org/resource/Science_fiction
+<http://dbpedia.org/resource/Science_fiction> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Supernatural_fiction
+<http://dbpedia.org/resource/Supernatural_fiction> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Tara_Road
+<http://dbpedia.org/resource/Tara_Road> rdf:type owl:NamedIndividual ;
+                                        owl:sameAs <http://www.example.com/binder/Tara%20Road> .
+
+
+###  http://dbpedia.org/resource/The_Amen_Corner
+<http://dbpedia.org/resource/The_Amen_Corner> rdf:type owl:NamedIndividual ;
+                                              owl:sameAs <http://www.example.com/binder/The%20Amen%20Corner> .
+
+
+###  http://dbpedia.org/resource/The_Bad_Place
+<http://dbpedia.org/resource/The_Bad_Place> rdf:type owl:NamedIndividual ;
+                                            owl:sameAs <http://www.example.com/binder/The%20Bad%20Place> .
+
+
+###  http://dbpedia.org/resource/The_Big_U
+<http://dbpedia.org/resource/The_Big_U> rdf:type owl:NamedIndividual ;
+                                        owl:sameAs <http://www.example.com/binder/The%20Big%20U> .
+
+
+###  http://dbpedia.org/resource/The_Body_Artist
+<http://dbpedia.org/resource/The_Body_Artist> rdf:type owl:NamedIndividual ;
+                                              owl:sameAs <http://www.example.com/binder/The%20Body%20Artist> .
+
+
+###  http://dbpedia.org/resource/The_Castle_in_the_Forest
+<http://dbpedia.org/resource/The_Castle_in_the_Forest> rdf:type owl:NamedIndividual ;
+                                                       owl:sameAs <http://www.example.com/binder/The%20Castle%20in%20the%20Forest> .
+
+
+###  http://dbpedia.org/resource/The_Castle_of_Otranto
+<http://dbpedia.org/resource/The_Castle_of_Otranto> rdf:type owl:NamedIndividual ;
+                                                    owl:sameAs <http://www.example.com/binder/The%20Castle%20of%20Otranto> .
+
+
+###  http://dbpedia.org/resource/The_Fantasies_of_Robert_A._Heinlein
+<http://dbpedia.org/resource/The_Fantasies_of_Robert_A._Heinlein> rdf:type owl:NamedIndividual ;
+                                                                  owl:sameAs <http://www.example.com/binder/The%20Fantasies%20of%20Robert%20A.%20Heinlein> .
+
+
+###  http://dbpedia.org/resource/The_Great_Gatsby
+<http://dbpedia.org/resource/The_Great_Gatsby> rdf:type owl:NamedIndividual ;
+                                               owl:sameAs <http://www.example.com/binder/The%20Great%20Gatsby> .
+
+
+###  http://dbpedia.org/resource/The_Hotel_New_Hampshire
+<http://dbpedia.org/resource/The_Hotel_New_Hampshire> rdf:type owl:NamedIndividual ;
+                                                      owl:sameAs <http://www.example.com/binder/The%20Hotel%20New%20Hampshire> .
+
+
+###  http://dbpedia.org/resource/The_Key_to_Rebecca
+<http://dbpedia.org/resource/The_Key_to_Rebecca> rdf:type owl:NamedIndividual ;
+                                                 owl:sameAs <http://www.example.com/binder/The%20Key%20to%20Rebecca> .
+
+
+###  http://dbpedia.org/resource/The_Land_of_Laughs
+<http://dbpedia.org/resource/The_Land_of_Laughs> rdf:type owl:NamedIndividual ;
+                                                 owl:sameAs <http://www.example.com/binder/The%20Land%20of%20Laughs> .
+
+
+###  http://dbpedia.org/resource/The_Moonstone
+<http://dbpedia.org/resource/The_Moonstone> rdf:type owl:NamedIndividual ;
+                                            owl:sameAs <http://www.example.com/binder/The%20Moonstone> .
+
+
+###  http://dbpedia.org/resource/The_Music_of_Chance
+<http://dbpedia.org/resource/The_Music_of_Chance> rdf:type owl:NamedIndividual ;
+                                                  owl:sameAs <http://www.example.com/binder/The%20Music%20of%20Chance> .
+
+
+###  http://dbpedia.org/resource/The_Prestige
+<http://dbpedia.org/resource/The_Prestige> rdf:type owl:NamedIndividual ;
+                                           owl:sameAs <http://www.example.com/binder/The%20Prestige> .
+
+
+###  http://dbpedia.org/resource/The_Prophet_of_Yonwood
+<http://dbpedia.org/resource/The_Prophet_of_Yonwood> rdf:type owl:NamedIndividual ;
+                                                     owl:sameAs <http://www.example.com/binder/The%20Prophet%20of%20Yonwood> .
+
+
+###  http://dbpedia.org/resource/Through_the_Arc_of_the_Rain_Forest
+<http://dbpedia.org/resource/Through_the_Arc_of_the_Rain_Forest> rdf:type owl:NamedIndividual ;
+                                                                 owl:sameAs <http://www.example.com/binder/Through%20the%20Arc%20of%20the%20Rain%20Forest> .
+
+
+###  http://dbpedia.org/resource/Travel_literature
+<http://dbpedia.org/resource/Travel_literature> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Travels_in_the_Scriptorium
+<http://dbpedia.org/resource/Travels_in_the_Scriptorium> rdf:type owl:NamedIndividual ;
+                                                         owl:sameAs <http://www.example.com/binder/Travels%20in%20the%20Scriptorium> .
+
+
+###  http://dbpedia.org/resource/War_novel
+<http://dbpedia.org/resource/War_novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/We_the_Living
+<http://dbpedia.org/resource/We_the_Living> rdf:type owl:NamedIndividual ;
+                                            owl:sameAs <http://www.example.com/binder/We%20the%20Living> .
+
+
+###  http://dbpedia.org/resource/Young_adult_novel
+<http://dbpedia.org/resource/Young_adult_novel> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Play_(theatre)
+<http://dbpedia.org/resource/Play_(theatre)> rdf:type owl:NamedIndividual .
+
+
+###  http://dbpedia.org/resource/Thriller_(genre)
+<http://dbpedia.org/resource/Thriller_(genre)> rdf:type owl:NamedIndividual .
+
+
+###  http://www.example.com/binder/Ace
+bd:Ace rdf:type owl:NamedIndividual ;
+       rdfs:label "Ace" .
+
+
+###  http://www.example.com/binder/Bantam
+bd:Bantam rdf:type owl:NamedIndividual ;
+          rdfs:label "Bantam" .
+
+
+###  http://www.example.com/binder/Berkley
+bd:Berkley rdf:type owl:NamedIndividual ;
+           rdfs:label "Berkley" .
+
+
+###  http://www.example.com/binder/Dell
+bd:Dell rdf:type owl:NamedIndividual ;
+        rdfs:label "Dell" .
+
+
+###  http://www.example.com/binder/NAL
+bd:NAL rdf:type owl:NamedIndividual ;
+       rdfs:label "NAL" .
+
+
+###  http://www.example.com/binder/Neuromancer
+bd:Neuromancer rdf:type owl:NamedIndividual ,
+                        bd:Book ,
+                        bd:FourStarBook ,
+                        bd:MediumBook ;
+               bd:hasAuthor <http://www.example.com/binder/William%20Gibson> ;
+               bd:hasGenre <http://dbpedia.org/resource/Cyberpunk> ;
+               bd:hasLanguage bd:en ;
+               bd:hasPublisher bd:Ace ;
+               bd:hasPageCount 384 ;
+               bd:hasRating 3.9 ;
+               bd:hasReleaseDate "2004-02-11"^^xsd:date ;
+               bd:hasTitle "Neuromancer" .
+
+
+###  http://www.example.com/binder/Reading
+bd:Reading rdf:type owl:NamedIndividual .
+
+
+###  http://www.example.com/binder/Scribner
+bd:Scribner rdf:type owl:NamedIndividual ;
+            rdfs:label "Scribner" .
+
+
+###  http://www.example.com/binder/Signet
+bd:Signet rdf:type owl:NamedIndividual ;
+          rdfs:label "Signet" .
+
+
+###  http://www.example.com/binder/Vintage
+bd:Vintage rdf:type owl:NamedIndividual ;
+           rdfs:label "Vintage" .
+
+
+###  http://www.example.com/binder/en
+bd:en rdf:type owl:NamedIndividual .
+
+
+###  http://www.example.com/binder/And%20Still%20I%20Rise
+<http://www.example.com/binder/And%20Still%20I%20Rise> rdf:type owl:NamedIndividual ,
+                                                                bd:Book ,
+																bd:FourStarBook ,
+																bd:ShortBook ;
+                                                       <http://purl.org/dc/terms/format> bd:Reading ;
+                                                       bd:hasAuthor <http://www.example.com/binder/Maya%20Angelou%2FLinda%20Sunshine%2FDiego%20Rivera> ;
+                                                       bd:hasGenre <http://dbpedia.org/resource/Poetry> ;
+                                                       bd:hasLanguage bd:en ;
+                                                       bd:hasPublisher <http://www.example.com/binder/Random%20House> ;
+                                                       bd:hasPageCount 54 ;
+                                                       bd:hasRating 4.42 ;
+                                                       bd:hasReleaseDate "2001-07-08"^^xsd:date ;
+                                                       bd:hasTitle "And Still I Rise" .
+
+
+###  http://www.example.com/binder/Ayn%20Rand%2FLeonard%20Peikoff
+<http://www.example.com/binder/Ayn%20Rand%2FLeonard%20Peikoff> rdf:type owl:NamedIndividual ;
+                                                               rdfs:label "Ayn Rand/Leonard Peikoff" .
+
+
+###  http://www.example.com/binder/Back%20Bay%20Books
+<http://www.example.com/binder/Back%20Bay%20Books> rdf:type owl:NamedIndividual ;
+                                                   rdfs:label "Back Bay Books" .
+
+
+###  http://www.example.com/binder/Book%20of%20Haikus
+<http://www.example.com/binder/Book%20of%20Haikus> rdf:type owl:NamedIndividual ,
+															bd:FourStarBook ,
+															bd:MediumBook ,
+                                                            bd:Book ;
+                                                   <http://purl.org/dc/terms/format> bd:Reading ;
+                                                   bd:hasAuthor <http://www.example.com/binder/Jack%20Kerouac> ;
+                                                   bd:hasGenre <http://dbpedia.org/resource/Poetry> ;
+                                                   bd:hasLanguage bd:en ;
+                                                   bd:hasPublisher <http://www.example.com/binder/Enitharmon%20Press> ;
+                                                   bd:hasPageCount 200 ;
+                                                   bd:hasRating 3.91 ;
+                                                   bd:hasReleaseDate "2004-02-03"^^xsd:date ;
+                                                   bd:hasTitle "Book of Haikus" .
+
+
+###  http://www.example.com/binder/Broadway%2FCrown%20Publishing%20Group
+<http://www.example.com/binder/Broadway%2FCrown%20Publishing%20Group> rdf:type owl:NamedIndividual ;
+                                                                      rdfs:label "Broadway/Crown Publishing Group" .
+
+
+###  http://www.example.com/binder/Christopher%20Priest
+<http://www.example.com/binder/Christopher%20Priest> rdf:type owl:NamedIndividual ;
+                                                     rdfs:label "Christopher Priest" .
+
+
+###  http://www.example.com/binder/Coffee%20House%20Press
+<http://www.example.com/binder/Coffee%20House%20Press> rdf:type owl:NamedIndividual ;
+                                                       rdfs:label "Coffee House Press" .
+
+
+###  http://www.example.com/binder/Corgi%20Books
+<http://www.example.com/binder/Corgi%20Books> rdf:type owl:NamedIndividual ;
+                                              rdfs:label "Corgi Books" .
+
+
+###  http://www.example.com/binder/Dean%20R.%20Koontz
+<http://www.example.com/binder/Dean%20R.%20Koontz> rdf:type owl:NamedIndividual ;
+                                                   rdfs:label "Dean R. Koontz" .
+
+
+###  http://www.example.com/binder/Don%20DeLillo
+<http://www.example.com/binder/Don%20DeLillo> rdf:type owl:NamedIndividual ;
+                                              rdfs:label "Don DeLillo" .
+
+
+###  http://www.example.com/binder/Dover%20Publications
+<http://www.example.com/binder/Dover%20Publications> rdf:type owl:NamedIndividual ;
+                                                     rdfs:label "Dover Publications" .
+
+
+###  http://www.example.com/binder/Enitharmon%20Press
+<http://www.example.com/binder/Enitharmon%20Press> rdf:type owl:NamedIndividual ;
+                                                   rdfs:label "Enitharmon Press" .
+
+
+###  http://www.example.com/binder/F.%20Scott%20Fitzgerald
+<http://www.example.com/binder/F.%20Scott%20Fitzgerald> rdf:type owl:NamedIndividual ;
+                                                        rdfs:label "F. Scott Fitzgerald" .
+
+
+###  http://www.example.com/binder/Gates%20of%20Fire
+<http://www.example.com/binder/Gates%20of%20Fire> rdf:type owl:NamedIndividual ,
+                                                           bd:Book ,
+														   bd:FourStarBook ,
+														   bd:MediumBook ;
+                                                  bd:hasAuthor <http://www.example.com/binder/Steven%20Pressfield> ;
+                                                  bd:hasGenre <http://dbpedia.org/resource/Historical_fiction> ;
+                                                  bd:hasLanguage bd:en ;
+                                                  bd:hasPublisher bd:Bantam ;
+                                                  bd:hasPageCount 392 ;
+                                                  bd:hasRating 4.42 ;
+                                                  bd:hasReleaseDate "2007-03-09"^^xsd:date ;
+                                                  bd:hasTitle "Gates of Fire" .
+
+
+###  http://www.example.com/binder/Going%20After%20Cacciato
+<http://www.example.com/binder/Going%20After%20Cacciato> rdf:type owl:NamedIndividual ,
+                                                                  bd:Book ,
+																  bd:FourStarBook ,
+																  bd:MediumBook ;
+                                                         bd:hasAuthor <http://www.example.com/binder/Tim%20O%27Brien> ;
+                                                         bd:hasGenre <http://dbpedia.org/resource/War_novel> ;
+                                                         bd:hasLanguage bd:en ;
+                                                         bd:hasPublisher <http://www.example.com/binder/Broadway%2FCrown%20Publishing%20Group> ;
+                                                         bd:hasPageCount 351 ;
+                                                         bd:hasRating 3.91 ;
+                                                         bd:hasReleaseDate "1999-01-09"^^xsd:date ;
+                                                         bd:hasTitle "Going After Cacciato" .
+
+
+###  http://www.example.com/binder/Henry%20Holt%20%26%20Company
+<http://www.example.com/binder/Henry%20Holt%20%26%20Company> rdf:type owl:NamedIndividual ;
+                                                             rdfs:label "Henry Holt & Company" .
+
+
+###  http://www.example.com/binder/Horace%20Walpole%2FE.F.%20Bleiler%2FWalter%20Scott
+<http://www.example.com/binder/Horace%20Walpole%2FE.F.%20Bleiler%2FWalter%20Scott> rdf:type owl:NamedIndividual ;
+                                                                                   rdfs:label "Horace Walpole/E.F. Bleiler/Walter Scott" .
+
+
+###  http://www.example.com/binder/In%20the%20Hand%20of%20Dante
+<http://www.example.com/binder/In%20the%20Hand%20of%20Dante> rdf:type owl:NamedIndividual ,
+                                                                      bd:Book ,
+																	  bd:MediumBook ,
+																	  bd:RatedBook ,
+																	  bd:ThreeStarBook ;
+                                                             <http://purl.org/dc/terms/format> bd:Reading ;
+                                                             bd:hasAuthor <http://www.example.com/binder/Nick%20Tosches> ;
+                                                             bd:hasGenre <http://dbpedia.org/resource/Historical_fiction> ,
+                                                                         <http://dbpedia.org/resource/Metafiction> ,
+                                                                         <http://dbpedia.org/resource/Novel> ;
+                                                             bd:hasLanguage bd:en ;
+                                                             bd:hasPublisher <http://www.example.com/binder/Back%20Bay%20Books> ;
+                                                             bd:hasPageCount 384 ;
+                                                             bd:hasRating 3.18 ;
+                                                             bd:hasReleaseDate "2003-01-09"^^xsd:date ;
+                                                             bd:hasTitle "In the Hand of Dante" .
+
+
+###  http://www.example.com/binder/Jack%20Kerouac
+<http://www.example.com/binder/Jack%20Kerouac> rdf:type owl:NamedIndividual ;
+                                               rdfs:label "Jack Kerouac" .
+
+
+###  http://www.example.com/binder/James%20Baldwin
+<http://www.example.com/binder/James%20Baldwin> rdf:type owl:NamedIndividual ;
+                                                rdfs:label "James Baldwin" .
+
+
+###  http://www.example.com/binder/Jeanne%20DuPrau
+<http://www.example.com/binder/Jeanne%20DuPrau> rdf:type owl:NamedIndividual ;
+                                                rdfs:label "Jeanne DuPrau" .
+
+
+###  http://www.example.com/binder/John%20Irving
+<http://www.example.com/binder/John%20Irving> rdf:type owl:NamedIndividual ;
+                                              rdfs:label "John Irving" .
+
+
+###  http://www.example.com/binder/Jonathan%20Carroll
+<http://www.example.com/binder/Jonathan%20Carroll> rdf:type owl:NamedIndividual ;
+                                                   rdfs:label "Jonathan Carroll" .
+
+
+###  http://www.example.com/binder/Karen%20Tei%20Yamashita
+<http://www.example.com/binder/Karen%20Tei%20Yamashita> rdf:type owl:NamedIndividual ;
+                                                        rdfs:label "Karen Tei Yamashita" .
+
+
+###  http://www.example.com/binder/Ken%20Follett%2FArto%20H%C3%A4il%C3%A4
+<http://www.example.com/binder/Ken%20Follett%2FArto%20H%C3%A4il%C3%A4> rdf:type owl:NamedIndividual ;
+                                                                       rdfs:label "Ken Follett/Arto Häilä" .
+
+
+###  http://www.example.com/binder/Life%20of%20Pi
+<http://www.example.com/binder/Life%20of%20Pi> rdf:type owl:NamedIndividual ,
+                                                        bd:Book ,
+													    bd:FourStarBook ,
+													    bd:MediumBook ;
+                                               bd:hasAuthor <http://www.example.com/binder/Yann%20Martel> ;
+                                               bd:hasGenre <http://dbpedia.org/resource/Fiction> ;
+                                               bd:hasLanguage bd:en ;
+                                               bd:hasPublisher <http://www.example.com/binder/Mariner%20Books%20%2F%20Harvest%20Books> ;
+                                               bd:hasPageCount 401 ;
+                                               bd:hasRating 3.91 ;
+                                               bd:hasReleaseDate "2004-03-05"^^xsd:date ;
+                                               bd:hasTitle "Life of Pi" .
+
+
+###  http://www.example.com/binder/Maeve%20Binchy
+<http://www.example.com/binder/Maeve%20Binchy> rdf:type owl:NamedIndividual ;
+                                               rdfs:label "Maeve Binchy" .
+
+
+###  http://www.example.com/binder/Mariner%20Books%20%2F%20Harvest%20Books
+<http://www.example.com/binder/Mariner%20Books%20%2F%20Harvest%20Books> rdf:type owl:NamedIndividual ;
+                                                                        rdfs:label "Mariner Books / Harvest Books" .
+
+
+###  http://www.example.com/binder/Mark%20Twain%2FHenry%20B.%20Wonham
+<http://www.example.com/binder/Mark%20Twain%2FHenry%20B.%20Wonham> rdf:type owl:NamedIndividual ;
+                                                                   rdfs:label "Mark Twain/Henry B. Wonham" .
+
+
+###  http://www.example.com/binder/Mark%20Z.%20Danielewski
+<http://www.example.com/binder/Mark%20Z.%20Danielewski> rdf:type owl:NamedIndividual ;
+                                                        rdfs:label "Mark Z. Danielewski" .
+
+
+###  http://www.example.com/binder/Maya%20Angelou%2FLinda%20Sunshine%2FDiego%20Rivera
+<http://www.example.com/binder/Maya%20Angelou%2FLinda%20Sunshine%2FDiego%20Rivera> rdf:type owl:NamedIndividual ;
+                                                                                   rdfs:label "Maya Angelou/Linda Sunshine/Diego Rivera" .
+
+
+###  http://www.example.com/binder/Modern%20Library
+<http://www.example.com/binder/Modern%20Library> rdf:type owl:NamedIndividual ;
+                                                 rdfs:label "Modern Library" .
+
+
+###  http://www.example.com/binder/Neal%20Stephenson
+<http://www.example.com/binder/Neal%20Stephenson> rdf:type owl:NamedIndividual ;
+                                                  rdfs:label "Neal Stephenson" .
+
+
+###  http://www.example.com/binder/Nick%20Tosches
+<http://www.example.com/binder/Nick%20Tosches> rdf:type owl:NamedIndividual ;
+                                               rdfs:label "Nick Tosches" .
+
+
+###  http://www.example.com/binder/Norman%20Mailer
+<http://www.example.com/binder/Norman%20Mailer> rdf:type owl:NamedIndividual ;
+                                                rdfs:label "Norman Mailer" .
+
+
+###  http://www.example.com/binder/Only%20Revolutions
+<http://www.example.com/binder/Only%20Revolutions> rdf:type owl:NamedIndividual ,
+                                                            bd:Book ,
+                                                            bd:MediumBook ,
+                                                            bd:RatedBook ,
+                                                            bd:ThreeStarBook ;
+                                                   <http://purl.org/dc/terms/format> bd:Reading ;
+                                                   bd:hasAuthor <http://www.example.com/binder/Mark%20Z.%20Danielewski> ;
+                                                   bd:hasGenre <http://dbpedia.org/resource/Literary_fiction> ;
+                                                   bd:hasLanguage bd:en ;
+                                                   bd:hasPublisher <http://www.example.com/binder/Pantheon%20Books> ;
+                                                   bd:hasPageCount 360 ;
+                                                   bd:hasRating 3.21 ;
+                                                   bd:hasReleaseDate "2006-12-09"^^xsd:date ;
+                                                   bd:hasTitle "Only Revolutions" .
+
+
+###  http://www.example.com/binder/Orb%20Books
+<http://www.example.com/binder/Orb%20Books> rdf:type owl:NamedIndividual ;
+                                            rdfs:label "Orb Books" .
+
+
+###  http://www.example.com/binder/Pantheon%20Books
+<http://www.example.com/binder/Pantheon%20Books> rdf:type owl:NamedIndividual ;
+                                                 rdfs:label "Pantheon Books" .
+
+
+###  http://www.example.com/binder/Paul%20Auster
+<http://www.example.com/binder/Paul%20Auster> rdf:type owl:NamedIndividual ;
+                                              rdfs:label "Paul Auster" .
+
+
+###  http://www.example.com/binder/Penguin%20Books
+<http://www.example.com/binder/Penguin%20Books> rdf:type owl:NamedIndividual ;
+                                                rdfs:label "Penguin Books" .
+
+
+###  http://www.example.com/binder/Pocket%20Books
+<http://www.example.com/binder/Pocket%20Books> rdf:type owl:NamedIndividual ;
+                                               rdfs:label "Pocket Books" .
+
+
+###  http://www.example.com/binder/Random%20House
+<http://www.example.com/binder/Random%20House> rdf:type owl:NamedIndividual ;
+                                               rdfs:label "Random House" .
+
+
+###  http://www.example.com/binder/Random%20House%20%28NY%29
+<http://www.example.com/binder/Random%20House%20%28NY%29> rdf:type owl:NamedIndividual ;
+                                                          rdfs:label "Random House (NY)" .
+
+
+###  http://www.example.com/binder/Random%20House%20Books%20for%20Young%20Readers
+<http://www.example.com/binder/Random%20House%20Books%20for%20Young%20Readers> rdf:type owl:NamedIndividual ;
+                                                                               rdfs:label "Random House Books for Young Readers" .
+
+
+###  http://www.example.com/binder/Robert%20A.%20Heinlein
+<http://www.example.com/binder/Robert%20A.%20Heinlein> rdf:type owl:NamedIndividual ;
+                                                       rdfs:label "Robert A. Heinlein" .
+
+
+###  http://www.example.com/binder/Roughing%20It
+<http://www.example.com/binder/Roughing%20It> rdf:type owl:NamedIndividual ,
+                                                       bd:Book ,
+													   bd:FourStarBook ,
+													   bd:LongBook ;
+                                              bd:hasAuthor <http://www.example.com/binder/Mark%20Twain%2FHenry%20B.%20Wonham> ;
+                                              bd:hasGenre <http://dbpedia.org/resource/Travel_literature> ;
+                                              bd:hasLanguage bd:en ;
+                                              bd:hasPublisher <http://www.example.com/binder/Pocket%20Books> ;
+                                              bd:hasPageCount 560 ;
+                                              bd:hasRating 3.89 ;
+                                              bd:hasReleaseDate "2005-05-04"^^xsd:date ;
+                                              bd:hasTitle "Roughing It" .
+
+
+###  http://www.example.com/binder/Steven%20Pressfield
+<http://www.example.com/binder/Steven%20Pressfield> rdf:type owl:NamedIndividual ;
+                                                    rdfs:label "Steven Pressfield" .
+
+
+###  http://www.example.com/binder/Tara%20Road
+<http://www.example.com/binder/Tara%20Road> rdf:type owl:NamedIndividual ,
+                                                     bd:Book ,
+													 bd:FourStarBook ,
+													 bd:LongBook ;
+                                            <http://purl.org/dc/terms/format> bd:Reading ;
+                                            bd:hasAuthor <http://www.example.com/binder/Maeve%20Binchy> ;
+                                            bd:hasGenre <http://dbpedia.org/resource/Novel> ;
+                                            bd:hasLanguage bd:en ;
+                                            bd:hasPublisher bd:Dell ;
+                                            bd:hasPageCount 648 ;
+                                            bd:hasRating 3.9 ;
+                                            bd:hasReleaseDate "2001-06-07"^^xsd:date ;
+                                            bd:hasTitle "Tara Road" .
+
+
+###  http://www.example.com/binder/The%20Moonstone
+<http://www.example.com/binder/The%20Moonstone> rdf:type owl:NamedIndividual ,
+                                                         bd:Book ,
+														 bd:FourStarBook ,
+														 bd:LongBook ;
+                                                bd:hasAuthor <http://www.example.com/binder/Wilkie%20Collins%2FCarolyn%20G.%20Heilbrun> ;
+                                                bd:hasGenre <http://dbpedia.org/resource/Epistolary_novel> ,
+                                                            <http://dbpedia.org/resource/Mystery_novel> ;
+                                                bd:hasLanguage bd:en ;
+                                                bd:hasPublisher <http://www.example.com/binder/Modern%20Library> ;
+                                                bd:hasPageCount 528 ;
+                                                bd:hasRating 3.91 ;
+                                                bd:hasReleaseDate "2001-11-09"^^xsd:date ;
+                                                bd:hasTitle "The Moonstone" .
+
+
+###  http://www.example.com/binder/The%20Prestige
+<http://www.example.com/binder/The%20Prestige> rdf:type owl:NamedIndividual ,
+                                                        bd:Book ,
+														bd:FourStarBook ,
+														bd:MediumBook ;
+                                               bd:hasAuthor <http://www.example.com/binder/Christopher%20Priest> ;
+                                               bd:hasGenre <http://dbpedia.org/resource/Horror_fiction> ,
+                                                           <http://dbpedia.org/resource/Science_fiction> ;
+                                               bd:hasLanguage bd:en ;
+                                               bd:hasPublisher <http://www.example.com/binder/Tor%20Books> ;
+                                               bd:hasPageCount 368 ;
+                                               bd:hasRating 3.89 ;
+                                               bd:hasReleaseDate "2006-03-10"^^xsd:date ;
+                                               bd:hasTitle "The Prestige" .
+
+
+###  http://www.example.com/binder/The%20Amen%20Corner
+<http://www.example.com/binder/The%20Amen%20Corner> rdf:type owl:NamedIndividual ,
+                                                             bd:Book ,
+														     bd:FourStarBook ,
+														     bd:RatedBook ,
+														     bd:ShortBook ;
+                                                    bd:hasAuthor <http://www.example.com/binder/James%20Baldwin> ;
+                                                    bd:hasGenre <http://dbpedia.org/resource/Play_(theatre)> ;
+                                                    bd:hasLanguage bd:en ;
+                                                    bd:hasPublisher bd:Vintage ;
+                                                    bd:hasPageCount 112 ;
+                                                    bd:hasRating 3.9 ;
+                                                    bd:hasReleaseDate "1999-05-02"^^xsd:date ;
+                                                    bd:hasTitle "The Amen Corner" .
+
+
+###  http://www.example.com/binder/The%20Bad%20Place
+<http://www.example.com/binder/The%20Bad%20Place> rdf:type owl:NamedIndividual ,
+                                                           bd:Book ,
+														   bd:FourStarBook ,
+														   bd:MediumBook ;
+                                                  bd:hasAuthor <http://www.example.com/binder/Dean%20R.%20Koontz> ;
+                                                  bd:hasGenre <http://dbpedia.org/resource/Horror_novel> ;
+                                                  bd:hasLanguage bd:en ;
+                                                  bd:hasPublisher bd:Berkley ;
+                                                  bd:hasPageCount 417 ;
+                                                  bd:hasRating 3.9 ;
+                                                  bd:hasReleaseDate "2004-06-07"^^xsd:date ;
+                                                  bd:hasTitle "The Bad Place" .
+
+
+###  http://www.example.com/binder/The%20Big%20U
+<http://www.example.com/binder/The%20Big%20U> rdf:type owl:NamedIndividual ,
+                                                       bd:Book ,
+													   bd:MediumBook ,
+													   bd:RatedBook ,
+													   bd:ThreeStarBook ;
+                                              <http://purl.org/dc/terms/format> bd:Reading ;
+                                              bd:hasAuthor <http://www.example.com/binder/Neal%20Stephenson> ;
+                                              bd:hasGenre <http://dbpedia.org/resource/Science_fiction> ;
+                                              bd:hasLanguage bd:en ;
+                                              bd:hasPublisher <http://www.example.com/binder/William%20Morrow%20Paperbacks> ;
+                                              bd:hasPageCount 308 ;
+                                              bd:hasRating 3.25 ;
+                                              bd:hasReleaseDate "2001-06-02"^^xsd:date ;
+                                              bd:hasTitle "The Big U" .
+
+
+###  http://www.example.com/binder/The%20Body%20Artist
+<http://www.example.com/binder/The%20Body%20Artist> rdf:type owl:NamedIndividual ,
+                                                             bd:Book ,
+															 bd:ShortBook ,
+															 bd:ThreeStarBook ;
+                                                    <http://purl.org/dc/terms/format> bd:Reading ;
+                                                    bd:hasAuthor <http://www.example.com/binder/Don%20DeLillo> ;
+                                                    bd:hasGenre <http://dbpedia.org/resource/Novella> ;
+                                                    bd:hasLanguage bd:en ;
+                                                    bd:hasPublisher bd:Scribner ;
+                                                    bd:hasPageCount 128 ;
+                                                    bd:hasRating 3.24 ;
+                                                    bd:hasReleaseDate "2002-05-02"^^xsd:date ;
+                                                    bd:hasTitle "The Body Artist" .
+
+
+###  http://www.example.com/binder/The%20Castle%20in%20the%20Forest
+<http://www.example.com/binder/The%20Castle%20in%20the%20Forest> rdf:type owl:NamedIndividual ,
+                                                                          bd:Book ,
+																		  bd:MediumBook ,
+																		  bd:RatedBook ,
+																		  bd:ThreeStarBook ;
+                                                                 bd:hasAuthor <http://www.example.com/binder/Norman%20Mailer> ;
+                                                                 bd:hasGenre <http://dbpedia.org/resource/Historical_fiction> ,
+                                                                             <http://dbpedia.org/resource/Supernatural_fiction> ;
+                                                                 bd:hasLanguage bd:en ;
+                                                                 bd:hasPublisher <http://www.example.com/binder/Random%20House%20%28NY%29> ;
+                                                                 bd:hasPageCount 477 ;
+                                                                 bd:hasRating 3.14 ;
+                                                                 bd:hasReleaseDate "2008-11-01"^^xsd:date ;
+                                                                 bd:hasTitle "The Castle in the Forest" .
+
+
+###  http://www.example.com/binder/The%20Castle%20of%20Otranto
+<http://www.example.com/binder/The%20Castle%20of%20Otranto> rdf:type owl:NamedIndividual ,
+                                                                     bd:Book ,
+																	 bd:ShortBook ,
+																	 bd:ThreeStarBook ;
+                                                            bd:hasAuthor <http://www.example.com/binder/Horace%20Walpole%2FE.F.%20Bleiler%2FWalter%20Scott> ;
+                                                            bd:hasGenre <http://dbpedia.org/resource/Gothic_fiction> ,
+                                                                        <http://dbpedia.org/resource/Horror_novel> ;
+                                                            bd:hasLanguage bd:en ;
+                                                            bd:hasPublisher <http://www.example.com/binder/Dover%20Publications> ;
+                                                            bd:hasPageCount 106 ;
+                                                            bd:hasRating 3.18 ;
+                                                            bd:hasReleaseDate "2005-07-03"^^xsd:date ;
+                                                            bd:hasTitle "The Castle of Otranto" .
+
+
+###  http://www.example.com/binder/The%20Fantasies%20of%20Robert%20A.%20Heinlein
+<http://www.example.com/binder/The%20Fantasies%20of%20Robert%20A.%20Heinlein> rdf:type owl:NamedIndividual ,
+                                                                                       bd:Book ,
+																					   bd:FourStarBook ,
+																					   bd:MediumBook ;
+                                                                              <http://purl.org/dc/terms/format> bd:Reading ;
+                                                                              bd:hasAuthor <http://www.example.com/binder/Robert%20A.%20Heinlein> ;
+                                                                              bd:hasGenre <http://dbpedia.org/resource/Science_fiction> ;
+                                                                              bd:hasLanguage bd:en ;
+                                                                              bd:hasPublisher <http://www.example.com/binder/Tor%20Books> ;
+                                                                              bd:hasPageCount 342 ;
+                                                                              bd:hasRating 3.9 ;
+                                                                              bd:hasReleaseDate "2003-05-05"^^xsd:date ;
+                                                                              bd:hasTitle "The Fantasies of Robert A. Heinlein" .
+
+
+###  http://www.example.com/binder/The%20Great%20Gatsby
+<http://www.example.com/binder/The%20Great%20Gatsby> rdf:type owl:NamedIndividual ,
+                                                              bd:Book ,
+															  bd:FourStarBook ,
+															  bd:RatedBook ,
+															  bd:ShortBook ;
+                                                     <http://purl.org/dc/terms/format> bd:Reading ;
+                                                     bd:hasAuthor <http://www.example.com/binder/F.%20Scott%20Fitzgerald> ;
+                                                     bd:hasGenre <http://dbpedia.org/resource/Novel> ;
+                                                     bd:hasLanguage bd:en ;
+                                                     bd:hasPublisher <http://www.example.com/binder/Penguin%20Books> ;
+                                                     bd:hasPageCount 188 ;
+                                                     bd:hasRating 3.91 ;
+                                                     bd:hasReleaseDate "1995-01-01"^^xsd:date ;
+                                                     bd:hasTitle "The Great Gatsby" .
+
+
+###  http://www.example.com/binder/The%20Hotel%20New%20Hampshire
+<http://www.example.com/binder/The%20Hotel%20New%20Hampshire> rdf:type owl:NamedIndividual ,
+                                                                       bd:Book ,
+																	   bd:FourStarBook ,
+																	   bd:MediumBook ;
+                                                              <http://purl.org/dc/terms/format> bd:Reading ;
+                                                              bd:hasAuthor <http://www.example.com/binder/John%20Irving> ;
+                                                              bd:hasGenre <http://dbpedia.org/resource/Romantic_novel> ;
+                                                              bd:hasLanguage bd:en ;
+                                                              bd:hasPublisher <http://www.example.com/binder/Corgi%20Books> ;
+                                                              bd:hasPageCount 428 ;
+                                                              bd:hasRating 3.9 ;
+                                                              bd:hasReleaseDate "1984-07-12"^^xsd:date ;
+                                                              bd:hasTitle "The Hotel New Hampshire" .
+
+
+###  http://www.example.com/binder/The%20Key%20to%20Rebecca
+<http://www.example.com/binder/The%20Key%20to%20Rebecca> rdf:type owl:NamedIndividual ,
+                                                                  bd:Book ,
+																  bd:FourStarBook ,
+																  bd:MediumBook ;
+                                                         <http://purl.org/dc/terms/format> bd:Reading ;
+                                                         bd:hasAuthor <http://www.example.com/binder/Ken%20Follett%2FArto%20H%C3%A4il%C3%A4> ;
+                                                         bd:hasGenre <http://dbpedia.org/resource/Historical_fiction> ,
+                                                                     <http://dbpedia.org/resource/Thriller_(genre)> ;
+                                                         bd:hasLanguage bd:en ;
+                                                         bd:hasPublisher bd:NAL ;
+                                                         bd:hasPageCount 352 ;
+                                                         bd:hasRating 3.89 ;
+                                                         bd:hasReleaseDate "2003-04-02"^^xsd:date ;
+                                                         bd:hasTitle "The Key to Rebecca" .
+
+
+###  http://www.example.com/binder/The%20Land%20of%20Laughs
+<http://www.example.com/binder/The%20Land%20of%20Laughs> rdf:type owl:NamedIndividual ,
+                                                                  bd:Book ,
+																  bd:FourStarBook ,
+																  bd:MediumBook ;
+                                                         <http://purl.org/dc/terms/format> bd:Reading ;
+                                                         bd:hasAuthor <http://www.example.com/binder/Jonathan%20Carroll> ;
+                                                         bd:hasGenre <http://dbpedia.org/resource/Fantasy_novel> ;
+                                                         bd:hasLanguage bd:en ;
+                                                         bd:hasPublisher <http://www.example.com/binder/Orb%20Books> ;
+                                                         bd:hasPageCount 253 ;
+                                                         bd:hasRating 3.9 ;
+                                                         bd:hasReleaseDate "2001-10-02"^^xsd:date ;
+                                                         bd:hasTitle "The Land of Laughs" .
+
+
+###  http://www.example.com/binder/The%20Music%20of%20Chance
+<http://www.example.com/binder/The%20Music%20of%20Chance> rdf:type owl:NamedIndividual ,
+                                                                   bd:Book ,
+																   bd:FourStarBook ,
+																   bd:MediumBook ;
+                                                          bd:hasAuthor <http://www.example.com/binder/Paul%20Auster> ;
+                                                          bd:hasGenre <http://dbpedia.org/resource/Mystery_novel> ;
+                                                          bd:hasLanguage bd:en ;
+                                                          bd:hasPublisher <http://www.example.com/binder/Penguin%20Books> ;
+                                                          bd:hasPageCount 217 ;
+                                                          bd:hasRating 3.9 ;
+                                                          bd:hasReleaseDate "1991-01-12"^^xsd:date ;
+                                                          bd:hasTitle "The Music of Chance" .
+
+
+###  http://www.example.com/binder/The%20Prophet%20of%20Yonwood
+<http://www.example.com/binder/The%20Prophet%20of%20Yonwood> rdf:type owl:NamedIndividual ,
+                                                                      bd:Book ,
+																	  bd:MediumBook ,
+																	  bd:RatedBook ,
+																	  bd:ThreeStarBook ;
+                                                             <http://purl.org/dc/terms/format> bd:Reading ;
+                                                             bd:hasAuthor <http://www.example.com/binder/Jeanne%20DuPrau> ;
+                                                             bd:hasGenre <http://dbpedia.org/resource/Science_fiction> ,
+                                                                         <http://dbpedia.org/resource/Young_adult_novel> ;
+                                                             bd:hasLanguage bd:en ;
+                                                             bd:hasPublisher <http://www.example.com/binder/Random%20House%20Books%20for%20Young%20Readers> ;
+                                                             bd:hasPageCount 289 ;
+                                                             bd:hasRating 3.27 ;
+                                                             bd:hasReleaseDate "2006-01-04"^^xsd:date ;
+                                                             bd:hasTitle "The Prophet of Yonwood" .
+
+
+###  http://www.example.com/binder/Through%20the%20Arc%20of%20the%20Rain%20Forest
+<http://www.example.com/binder/Through%20the%20Arc%20of%20the%20Rain%20Forest> rdf:type owl:NamedIndividual ,
+                                                                                        bd:Book ,
+																						bd:FourStarBook ,
+																						bd:MediumBook ;
+                                                                               <http://purl.org/dc/terms/format> bd:Reading ;
+                                                                               bd:hasAuthor <http://www.example.com/binder/Karen%20Tei%20Yamashita> ;
+                                                                               bd:hasGenre <http://dbpedia.org/resource/Magical_Realism> ;
+                                                                               bd:hasLanguage bd:en ;
+                                                                               bd:hasPublisher <http://www.example.com/binder/Coffee%20House%20Press> ;
+                                                                               bd:hasPageCount 212 ;
+                                                                               bd:hasRating 3.9 ;
+                                                                               bd:hasReleaseDate "1990-01-07"^^xsd:date ;
+                                                                               bd:hasTitle "Through the Arc of the Rain Forest" .
+
+
+###  http://www.example.com/binder/Tim%20O%27Brien
+<http://www.example.com/binder/Tim%20O%27Brien> rdf:type owl:NamedIndividual ;
+                                                rdfs:label "Tim O'Brien" .
+
+
+###  http://www.example.com/binder/Tor%20Books
+<http://www.example.com/binder/Tor%20Books> rdf:type owl:NamedIndividual ;
+                                            rdfs:label "Tor Books" .
+
+
+###  http://www.example.com/binder/Travels%20in%20the%20Scriptorium
+<http://www.example.com/binder/Travels%20in%20the%20Scriptorium> rdf:type owl:NamedIndividual ,
+                                                                          bd:Book ,
+																		  bd:ShortBook ,
+																		  bd:ThreeStarBook ;
+                                                                 <http://purl.org/dc/terms/format> bd:Reading ;
+                                                                 bd:hasAuthor <http://www.example.com/binder/Paul%20Auster> ;
+                                                                 bd:hasGenre <http://dbpedia.org/resource/Metafiction> ;
+                                                                 bd:hasLanguage bd:en ;
+                                                                 bd:hasPublisher <http://www.example.com/binder/Henry%20Holt%20%26%20Company> ;
+                                                                 bd:hasPageCount 145 ;
+                                                                 bd:hasRating 3.23 ;
+                                                                 bd:hasReleaseDate "2008-11-01"^^xsd:date ;
+                                                                 bd:hasTitle "Travels in the Scriptorium" .
+
+
+###  http://www.example.com/binder/We%20the%20Living
+<http://www.example.com/binder/We%20the%20Living> rdf:type owl:NamedIndividual ,
+                                                           bd:Book ,
+														   bd:FourStarBook ,
+														   bd:MediumBook ;
+                                                  bd:hasAuthor <http://www.example.com/binder/Ayn%20Rand%2FLeonard%20Peikoff> ;
+                                                  bd:hasGenre <http://dbpedia.org/resource/Autobiographical_novel> ,
+                                                              <http://dbpedia.org/resource/Historical_fiction> ;
+                                                  bd:hasLanguage bd:en ;
+                                                  bd:hasPublisher bd:Signet ;
+                                                  bd:hasPageCount 464 ;
+                                                  bd:hasRating 3.91 ;
+                                                  bd:hasReleaseDate "1996-01-01"^^xsd:date ;
+                                                  bd:hasTitle "We the Living" .
+
+
+###  http://www.example.com/binder/Wilkie%20Collins%2FCarolyn%20G.%20Heilbrun
+<http://www.example.com/binder/Wilkie%20Collins%2FCarolyn%20G.%20Heilbrun> rdf:type owl:NamedIndividual ;
+                                                                           rdfs:label "Wilkie Collins/Carolyn G. Heilbrun" .
+
+
+###  http://www.example.com/binder/William%20Gibson
+<http://www.example.com/binder/William%20Gibson> rdf:type owl:NamedIndividual ;
+                                                 rdfs:label "William Gibson" .
+
+
+###  http://www.example.com/binder/William%20Morrow%20Paperbacks
+<http://www.example.com/binder/William%20Morrow%20Paperbacks> rdf:type owl:NamedIndividual ;
+                                                              rdfs:label "William Morrow Paperbacks" .
+
+
+###  http://www.example.com/binder/Yann%20Martel
+<http://www.example.com/binder/Yann%20Martel> rdf:type owl:NamedIndividual ;
+                                              rdfs:label "Yann Martel" .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
